@@ -15,11 +15,26 @@ li {
 }
 
 .shelf {
-  width: 60vw;
+  width: 50vw;
   display: flex;
   justify-content: center;
   align-items: center;
   height: auto;
   border-style: solid;
-  border-width: 2rem;
+  border-width: 1rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap */
+  border-bottom-style: solid;
+  border-color: brown;
+  border-width: 1rem;
+  width: 50vw;
+  margin-top: 1rem;
+}
+
+.book {
+  margin: 0 0.1vw 0 0.1vw;
+  width: 3vw; /* Distribute space evenly among 15 elements */
 }

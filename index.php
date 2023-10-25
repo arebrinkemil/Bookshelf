@@ -62,33 +62,26 @@ $indexed_books = array_values($_SESSION['sortedBooks']);
 </head>
 
 <body>
+    <div class=" shelf">
+        <section>
+            <?php
+            $totalBooks = count($indexed_books);
+            for ($i = 0; $i < $totalBooks; $i += 15) {
+            ?>
+                <div class="row">
+                    <?php
+                    for ($j = $i; $j < $i + 15 && $j < $totalBooks; $j++) {
+                    ?>
+                        <div class="book" style="background-color:<?php echo $indexed_books[$j]['color'] ?> ;"><?php echo $indexed_books[$j]['title']; ?></div>
+                    <?php
+                    }
+                    ?>
+                </div>
+            <?php
+            }
+            ?>
+        </section>
 
-    <section>
-        <?php
-        $i = 0;
-        while ($i < count($indexed_books)) {
-        ?>
-            <div class="row">
-                <?php
-                for ($j = $i; $j < $i + 15 && $j < count($indexed_books); $j++, $i++) {
-                ?>
-                    <div class="book"><?php echo $indexed_books[$j]['title']; ?></div>
-                <?php
-                }
-                ?>
-            </div>
-        <?php
-        }
-        ?>
-    </section>
-
-    <div class="shelf">
-        <ul>
-            <div class="divider"></div>
-            <?php foreach ($indexed_books as $key => $book) : ?>
-                <li style="background-color:<?php echo $book['color']; ?> ;"><?php echo $book['title']; ?></li>
-            <?php endforeach ?>
-        </ul>
     </div>
 
     <h1>Select a Sort Method</h1>
