@@ -72,7 +72,11 @@ $indexed_books = array_values($_SESSION['sortedBooks']);
                     <?php
                     for ($j = $i; $j < $i + 15 && $j < $totalBooks; $j++) {
                     ?>
-                        <div class="book" style="background-color:<?php echo $indexed_books[$j]['color'] ?> ;"><?php echo $indexed_books[$j]['title']; ?></div>
+                        <div class="book" style="background-color:<?php echo $indexed_books[$j]['color'] ?> ;">
+                            <div class="book-spine">
+                                <p><?php echo $indexed_books[$j]['title']; ?></p>
+                            </div>
+                        </div>
                     <?php
                     }
                     ?>
