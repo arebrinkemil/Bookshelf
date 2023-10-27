@@ -14,9 +14,18 @@ if (!isset($_SESSION['originalBooks'])) {
 $searchQuery = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['search'])) {
+        $searchQuery = $_POST['search'];
+    }
+
+
+    $_SESSION['sortedBooks'] = array_filter($_SESSION['originalBooks'], function ($book) use ($searchQuery) {
+        return stripos($book['title'], $searchQuery) !== false || stripos($book['author'], $searchQuery) !== false;
+    });
+
+
     if (isset($_POST['sorting'])) {
         $_SESSION['selectedSort'] = $_POST['sorting'];
-
         if ($_SESSION['selectedSort'] === 'alpha') {
             sort($_SESSION['sortedBooks']);
         } elseif ($_SESSION['selectedSort'] === 'rel') {
@@ -40,33 +49,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (isset($_POST['search'])) {
-        $searchQuery = $_POST['search'];
-    }
-
     if (array_key_exists('asc', $_POST)) {
         $_SESSION['direction'] = true;
     } elseif (array_key_exists('desc', $_POST)) {
         $_SESSION['direction'] = false;
     }
-}
 
-
-
-
-$_SESSION['sortedBooks'] = array_filter($_SESSION['originalBooks'], function ($book) use ($searchQuery) {
-    return stripos($book['title'], $searchQuery) !== false || stripos($book['author'], $searchQuery) !== false;
-});
-
-
-
-$indexed_books = array_values($_SESSION['sortedBooks']);
-
-if (!$_SESSION['direction']) {
-    $indexed_books = array_reverse($indexed_books);
-} else {
     $indexed_books = array_values($_SESSION['sortedBooks']);
+    if (!$_SESSION['direction']) {
+        $indexed_books = array_reverse($indexed_books);
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
