@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 return $a['color'] <=> $b['color'];
             });
         } elseif ($_SESSION['selectedSort'] === 'ori') {
-            $_SESSION['sortedBooks'] = $_SESSION['originalBooks'];
+            $_SESSION['sortedBooks'];
         }
     }
 
