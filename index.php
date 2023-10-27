@@ -7,33 +7,35 @@ session_start();
 if (!isset($_SESSION['originalBooks'])) {
     $_SESSION['originalBooks'] = $books;
     $_SESSION['sortedBooks'] = $books;
+    $_SESSION['selectedSort'] = 'ori';
+    $_SESSION['direction'] = true;
 }
 
 $searchQuery = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['sorting'])) {
-        $selectedSort = $_POST['sorting'];
+        $_SESSION['selectedSort'] = $_POST['sorting'];
 
-        if ($selectedSort === 'alpha') {
+        if ($_SESSION['selectedSort'] === 'alpha') {
             sort($_SESSION['sortedBooks']);
-        } elseif ($selectedSort === 'rel') {
+        } elseif ($_SESSION['selectedSort'] === 'rel') {
             uasort($_SESSION['sortedBooks'], function ($a, $b) {
                 return $a['release'] <=> $b['release'];
             });
-        } elseif ($selectedSort === 'page') {
+        } elseif ($_SESSION['selectedSort'] === 'page') {
             uasort($_SESSION['sortedBooks'], function ($a, $b) {
                 return $a['pages'] <=> $b['pages'];
             });
-        } elseif ($selectedSort === 'aut') {
+        } elseif ($_SESSION['selectedSort'] === 'aut') {
             uasort($_SESSION['sortedBooks'], function ($a, $b) {
                 return $a['author'] <=> $b['author'];
             });
-        } elseif ($selectedSort === 'col') {
+        } elseif ($_SESSION['selectedSort'] === 'col') {
             uasort($_SESSION['sortedBooks'], function ($a, $b) {
                 return $a['color'] <=> $b['color'];
             });
-        } elseif ($selectedSort === 'ori') {
+        } elseif ($_SESSION['selectedSort'] === 'ori') {
             $_SESSION['sortedBooks'] = $_SESSION['originalBooks'];
         }
     }
@@ -41,15 +43,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['search'])) {
         $searchQuery = $_POST['search'];
     }
+
+    if (array_key_exists('asc', $_POST)) {
+        $_SESSION['direction'] = true;
+    } elseif (array_key_exists('desc', $_POST)) {
+        $_SESSION['direction'] = false;
+    }
 }
 
-$_SESSION['sortedBooks'] = array_filter($_SESSION['sortedBooks'], function ($book) use ($searchQuery) {
+
+
+
+$_SESSION['sortedBooks'] = array_filter($_SESSION['originalBooks'], function ($book) use ($searchQuery) {
     return stripos($book['title'], $searchQuery) !== false || stripos($book['author'], $searchQuery) !== false;
 });
 
 
+
 $indexed_books = array_values($_SESSION['sortedBooks']);
 
+if (!$_SESSION['direction']) {
+    $indexed_books = array_reverse($indexed_books);
+} else {
+    $indexed_books = array_values($_SESSION['sortedBooks']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -62,6 +79,28 @@ $indexed_books = array_values($_SESSION['sortedBooks']);
 </head>
 
 <body>
+
+    <div class="sorter">
+
+        <h1>Select a Sort Method</h1>
+        <form action="" method="post">
+            <input type="submit" name="asc" class="button" value="ASC" />
+
+            <input type="submit" name="desc" class="button" value="DESC" />
+            <select name="sorting">
+                <option value="ori" <?php echo ($_SESSION['selectedSort'] == 'ori' ? 'selected' : ''); ?>>Original</option>
+                <option value="alpha" <?php echo ($_SESSION['selectedSort'] == 'alpha' ? 'selected' : ''); ?>>Alphabetical</option>
+                <option value="rel" <?php echo ($_SESSION['selectedSort'] == 'rel' ? 'selected' : ''); ?>>Release</option>
+                <option value="page" <?php echo ($_SESSION['selectedSort'] == 'page' ? 'selected' : ''); ?>>Pages</option>
+                <option value="aut" <?php echo ($_SESSION['selectedSort'] == 'aut' ? 'selected' : ''); ?>>Author</option>
+                <option value="col" <?php echo ($_SESSION['selectedSort'] == 'col' ? 'selected' : ''); ?>>Color</option>
+            </select>
+            <input type="text" name="search" placeholder="Search by title" value="<?php echo $searchQuery; ?>">
+            <input type="submit" value="Submit">
+
+        </form>
+
+    </div>
     <div class=" shelf">
         <section>
             <?php
@@ -88,19 +127,7 @@ $indexed_books = array_values($_SESSION['sortedBooks']);
 
     </div>
 
-    <h1>Select a Sort Method</h1>
-    <form action="" method="post">
-        <select name="sorting">
-            <option value="ori">Original</option>
-            <option value="alpha">Alphabetical</option>
-            <option value="rel">Release</option>
-            <option value="page">Pages</option>
-            <option value="aut">Author</option>
-            <option value="col">Color</option>
-        </select>
-        <input type="text" name="search" placeholder="Search by title" value="<?php echo $searchQuery; ?>">
-        <input type="submit" value="Submit">
-    </form>
+
 </body>
 
 </html>
