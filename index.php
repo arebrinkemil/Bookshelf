@@ -12,6 +12,7 @@ if (!isset($_SESSION['originalBooks'])) {
 }
 
 $searchQuery = "";
+$indexed_books = array_values($_SESSION['sortedBooks'] ?? []);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['search'])) {
@@ -55,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['direction'] = false;
     }
 
-    $indexed_books = array_values($_SESSION['sortedBooks']);
     if (!$_SESSION['direction']) {
         $indexed_books = array_reverse($indexed_books);
     }
